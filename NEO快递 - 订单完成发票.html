@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<!-- saved from url=(0134)file:///D:/Downloads/%E5%A4%8D%E5%8F%A4%E6%9C%AA%E6%9D%A5%E4%B8%BB%E4%B9%89%E5%BF%AB%E9%80%92%E5%8F%91%E7%A5%A8%E7%B3%BB%E7%BB%9F.html -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEO快递 - 订单完成发票</title>
+    <link rel="stylesheet" href="./NEO快递 - 订单完成发票_files/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, #8a2be2, #00bfff, #ff69b4, #00ced1);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: #e0e0ff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* CRT扫描线效果 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15) 0px,
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 255, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(20, 20, 40, 0.85);
+            border-radius: 15px;
+            padding: 30px;
+            border: 3px solid #ff00ff;
+            box-shadow: 
+                0 0 20px rgba(255, 0, 255, 0.5),
+                inset 0 0 30px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .retro-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, #00ffff, #ff00ff, #00ffaa, #ff69b4) 1;
+            border-radius: 15px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ffaa;
+            text-shadow: 
+                0 0 10px #00ffaa,
+                0 0 20px #00ffaa,
+                0 0 30px #00ffaa;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #ff00ff;
+            text-shadow: 0 0 5px #ff00ff;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 20px;
+        }
+
+        .invoice-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-group {
+            background: rgba(30, 30, 60, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #4444ff;
+        }
+
+        .info-title {
+            font-size: 16px;
+            color: #00ffff;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: #e0e0ff;
+            line-height: 1.5;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff00ff, #00ffff, #ff00ff, transparent);
+            margin: 20px 0;
+            border: none;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .items-table th {
+            background: rgba(100, 80, 255, 0.3);
+            color: #00ffff;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .items-table td {
+            padding: 12px;
+            border-bottom: 1px solid #4444ff;
+            color: #e0e0ff;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .total-section {
+            background: rgba(30, 30, 60, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #4444ff;
+            text-align: right;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .total-label {
+            color: #ff00ff;
+        }
+
+        .total-value {
+            color: #00ffaa;
+            font-weight: bold;
+        }
+
+        .grand-total {
+            font-size: 20px;
+            border-top: 2px solid #ff00ff;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .qr-section {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(30, 30, 60, 0.7);
+            border-radius: 10px;
+            border: 1px solid #4444ff;
+        }
+
+        .qr-title {
+            font-size: 18px;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: repeating-conic-gradient(
+                #000 0% 25%,
+                #fff 0% 50%
+            ) 50% / 20px 20px;
+            border-radius: 5px;
+        }
+
+        .qr-text {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #e0e0ff;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #8080ff;
+            padding-top: 20px;
+            border-top: 1px solid #4444ff;
+        }
+
+        .retro-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .vaporwave-sun {
+            position: fixed;
+            top: 50px;
+            right: 50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255,0,255,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .anime-girl {
+            position: fixed;
+            bottom: 0;
+            left: 50px;
+            width: 200px;
+            height: 300px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300"><style>.skin{fill:%23ffb6c1;}.hair{fill:%23ff69b4;}.dress{fill:%238a2be2;}.eye{fill:%2300ffff;}</style></head><body><circle cx="100" cy="80" r="40" class="hair"><circle cx="100" cy="70" r="30" class="skin"><circle cx="85" cy="65" r="5" class="eye"><circle cx="115" cy="65" r="5" class="eye"><path d="M70 100 Q100 120 130 100 L130 250 Q100 270 70 250 Z" class="dress"><div class="scanlines"></div>
+    <div class="retro-grid"></div>
+    <div class="vaporwave-sun"></div>
+    <div class="anime-girl"></div>
+
+    <div class="container">
+        <div class="retro-border"></div>
+        <div class="header">
+            <h1 class="title pulse">STELLAR COURIER</h1>
+            <div class="subtitle">NEO EXPRESS - 高端快递服务</div>
+        </div>
+
+        <div class="invoice-info">
+            <div class="info-group" style="transform: translateY(0px); box-shadow: none;">
+                <div class="info-title">Order Number</div>
+                <div class="info-value">NEO-2026-001234</div>
+            </div>
+            <div class="info-group">
+                <div class="info-title">Invoice Date</div>
+                <div class="info-value">二〇二六年一月一〇日</div>
+            </div>
+            <div class="info-group">
+                <div class="info-title">Customer Name</div>
+                <div class="info-value">田忠寅 (MR.sb)</div>
+            </div>
+            <div class="info-group">
+                <div class="info-title">Shipping Address</div>
+                <div class="info-value">〒100-0001<br>猎户座旋臂 • 太阳系 • 地球 • 东经116.60778850562718 • 北纬35.37775925234919<br>中国 山东济宁</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="opacity: 1; transform: translateX(0px); transition: 0.5s;">
+                    <td>特种生物—动物界‌•脊索动物门‌•爬行纲‌•龟鳖目‌•地龟科‌•拟水龟属‌•乌龟种</td>
+                    <td>1</td>
+                    <td>¥15,000</td>
+                    <td>¥30,000</td>
+                </tr>
+                <tr style="opacity: 1; transform: translateX(0px); transition: 0.5s;">
+                    <td>短距离生物运输不专用聚合物非刚性容器</td>
+                    <td>1</td>
+                    <td>¥45,000</td>
+                    <td>¥45,000</td>
+                </tr>
+                <tr style="opacity: 1; transform: translateX(0px); transition: 0.5s;">
+                    <td>冷链运输服务费</td>
+                    <td>1</td>
+                    <td>¥8,000</td>
+                    <td>¥8,000</td>
+                </tr>
+                <tr style="opacity: 1; transform: translateX(0px); transition: 0.5s;">
+                    <td>保险费用</td>
+                    <td>1</td>
+                    <td>¥2,500</td>
+                    <td>¥2,500</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="total-section">
+            <div class="total-row">
+                <span class="total-label">Subtotal:</span>
+                <span class="total-value">¥85,500</span>
+            </div>
+            <div class="total-row">
+                <span class="total-label">Tax (8%):</span>
+                <span class="total-value">¥6,840</span>
+            </div>
+            <div class="total-row">
+                <span class="total-label">Rebate (99%):</span>
+                <span class="total-value">¥92,330</span>
+            </div><div class="total-row grand-total">
+                <span class="total-label">Grand Total:</span>
+                <span class="total-value">¥10</span>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="qr-section">
+            <div class="qr-title">ELECTRONIC INVOICE QR CODE</div>
+            <div class="qr-code">
+                <div class="qr-placeholder"></div>
+            </div>
+            <div class="qr-text">Scan to download your electronic invoice</div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026-2026 NEO Express Co., Ltd.</p>
+            <p style="margin-top: 10px;">System Version: CyberPunk v4.2 | Delivery Status: Completed</p>
+            
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add glitch effect to title
+            const title = document.querySelector('.title');
+            title.classList.add('pulse');
+            
+            // Add hover effects to info groups
+            const infoGroups = document.querySelectorAll('.info-group');
+            infoGroups.forEach(group => {
+                group.addEventListener('mouseenter', () => {
+                    group.style.transform = 'translateY(-3px)';
+                    group.style.boxShadow = '0 5px 15px rgba(255, 0, 255, 0.3)';
+                });
+                
+                group.addEventListener('mouseleave', () => {
+                    group.style.transform = 'translateY(0)';
+                    group.style.boxShadow = 'none';
+                });
+            });
+            
+            // Animate table rows
+            const tableRows = document.querySelectorAll('.items-table tbody tr');
+            tableRows.forEach((row, index) => {
+                row.style.opacity = '0';
+                row.style.transform = 'translateX(-20px)';
+                
+                setTimeout(() => {
+                    row.style.transition = 'all 0.5s ease';
+                    row.style.opacity = '1';
+                    row.style.transform = 'translateX(0)';
+                }, 300 + index * 100);
+            });
+            
+            // Add click effect to QR code
+            const qrCode = document.querySelector('.qr-code');
+            qrCode.addEventListener('click', () => {
+                qrCode.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    qrCode.style.transform = 'scale(1)';
+                }, 200);
+            });
+        });
+    </script>
+
+
+</path></circle></circle></circle></circle></body></html>
