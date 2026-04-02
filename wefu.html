@@ -420,7 +420,20 @@
             margin-top: 8px;
             text-align: right;
             color: #ff88aa;
-        }</style>
+        }
+       .click-area {
+  display: inline-block;   /* 或 block */
+  width: 100px;           /* 自定义宽度 */
+  height: 50px;           /* 自定义高度 */
+  background: transparent; /* 完全透明，不遮挡背景 */
+  /* 可选：添加背景色或边框用于调试，正式使用时去掉 */
+  /* background: rgba(255,0,0,0.2); 调试用半透明红色 */
+  
+  /* 确保没有任何文字导致的占位 */
+  font-size: 0;
+  line-height: 0;
+  text-decoration: none;  /* 去掉下划线（无文字时无关紧要） */
+}</style>
 </head>
 <body>
 <div class="invoice-container">
@@ -501,7 +514,7 @@
                 <i class="fas fa-hourglass-start"></i> 待结清 | WAITING FOR PAID
             </div>
             
-            <button class="pay-now-btn" id="fakePayBtn"><a href="https://camsla.github.io/redesigned-goggles/wx.png"></a>
+            <button class="pay-now-btn" id="fakePayBtn"><a href="./wx.png" class="click-area"></a>
     <i class="fas fa-bolt"></i> 今すぐ決済 / PAY NOW</button>
         </div>
 
